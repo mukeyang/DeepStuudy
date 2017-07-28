@@ -32,7 +32,7 @@ class network(object):
         n = len(training_data)
         for j in range(epochs):
             random.shuffle(training_data)
-            mini_batches=[test_data[k:k+mini_batch_size] for k in range(0,n,mini_batch_size)]
+            mini_batches=[training_data[k:k+mini_batch_size] for k in range(0,n,mini_batch_size)]
             for mini_batch in mini_batches:
                 self.updata_mini_batch(mini_batch,eta)
             if test_data:
@@ -49,7 +49,7 @@ class network(object):
             n_b=[nb+dnb for  nb,dnb in zip(n_b,delta_n_b)]
             n_w=[nw+dnw for nw ,dnw in zip(n_w,delta_n_w)]
         self.weights=[w-(eta/len(mini_batch))*nw for w,nw in zip(self.weights,n_w)]
-        self.biases=[b-(eta-len(mini_batch)) *nb for b,nb in zip(self.biases,n_b)]
+        self.biases=[b-(eta/len(mini_batch)) *nb for b,nb in zip(self.biases,n_b)]
     def evaluate(self, test_data):
         test_results = [(np.argmax(self.feedforward(x)), y)
                         for (x, y) in test_data]
@@ -76,7 +76,7 @@ class network(object):
             sp=sigmoid_prime(z)
             delta=np.dot(self.weights[-l+1].T,delta)*sp
             ub[-l]=delta
-            ub[-l]=np.dot(delta,activitions[-l-1].T)
+            uw[-l]=np.dot(delta,activitions[-l-1].T)
         return ub,uw
     def cost_derivative(self,out_put_activitions,y):
         return  out_put_activitions-y
